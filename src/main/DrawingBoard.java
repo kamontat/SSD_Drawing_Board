@@ -5,18 +5,19 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
+
 import objects.*;
 
 public class DrawingBoard extends JPanel {
-
-	private MouseAdapter mouseAdapter; 
+	
+	private MouseAdapter mouseAdapter;
 	private List<GObject> gObjects;
 	private GObject target;
 	
 	private int gridSize = 10;
 	
 	public DrawingBoard() {
-		gObjects = new ArrayList<GObject>();
+		gObjects = new ArrayList<>();
 		mouseAdapter = new MAdapter();
 		addMouseListener(mouseAdapter);
 		addMouseMotionListener(mouseAdapter);
@@ -24,13 +25,19 @@ public class DrawingBoard extends JPanel {
 	}
 	
 	public void addGObject(GObject gObject) {
-		// TODO: Implement this method.
+		gObjects.add(gObject);
+		repaint();
 	}
 	
 	public void groupAll() {
-		// TODO: Implement this method.
+		CompositeGObject b = new CompositeGObject();
+		gObjects.forEach(b::add);
+		gObjects.clear();
+		gObjects.add(b);
+		
+		repaint();
 	}
-
+	
 	public void deleteSelected() {
 		// TODO: Implement this method.
 	}
@@ -46,12 +53,12 @@ public class DrawingBoard extends JPanel {
 		paintGrids(g);
 		paintObjects(g);
 	}
-
+	
 	private void paintBackground(Graphics g) {
 		g.setColor(Color.white);
 		g.fillRect(0, 0, getWidth(), getHeight());
 	}
-
+	
 	private void paintGrids(Graphics g) {
 		g.setColor(Color.lightGray);
 		int gridCountX = getWidth() / gridSize;
@@ -63,29 +70,48 @@ public class DrawingBoard extends JPanel {
 			g.drawLine(0, gridSize * i, getWidth(), gridSize * i);
 		}
 	}
-
+	
 	private void paintObjects(Graphics g) {
 		for (GObject go : gObjects) {
 			go.paint(g);
 		}
 	}
-
+	
 	class MAdapter extends MouseAdapter {
-
-		// TODO: You need some variables here
+		private GObject select;
+		private int x;
+		private int y;
 		
 		private void deselectAll() {
-			// TODO: Implement this method.
+			select = null;
+			x = 0;
+			y = 0;
+			gObjects.forEach(GObject::deselected);
+			repaint();
 		}
 		
 		@Override
 		public void mousePressed(MouseEvent e) {
-			// TODO: Implement this method.
+			deselectAll();
+			x = e.getX() - x;
+			y = e.getY() - y;
+			gObjects.forEach(gObject -> {
+				if (gObject.pointerHit(x, y)) {
+					select = gObject;
+					gObject.selected();
+				}
+			});
+			repaint();
 		}
-
+		
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			// TODO: Implement this method.
+			x = e.getX() - x;
+			y = e.getY() - y;
+			if (select != null) {
+				select.move(x, y);
+				repaint();
+			}
 		}
 	}
 	

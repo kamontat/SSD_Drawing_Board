@@ -24,8 +24,8 @@ public class Window extends JFrame {
 	private JButton clearButton = new JButton("Clear All");
 
 	public Window() {
-		setAlwaysOnTop(true);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		// setAlwaysOnTop(true);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setResizable(false);
 		initComponents();
 		pack();
