@@ -24,7 +24,7 @@ public class Window extends JFrame {
 	private JButton rectButton = new JButton("Create Rect");
 	private JButton groupButton = new JButton("Group");
 	private JButton groupAllButton = new JButton("Group All");
-	private JButton unGroupAllButton = new JButton("Ungroup All");
+	private JButton unGroupButton = new JButton("Ungroup");
 	private JButton deleteButton = new JButton("Delete");
 	private JButton clearButton = new JButton("Clear All");
 	
@@ -58,7 +58,7 @@ public class Window extends JFrame {
 		add(bottomPanel, BorderLayout.SOUTH);
 		bottomPanel.add(groupButton);
 		bottomPanel.add(groupAllButton);
-		bottomPanel.add(unGroupAllButton);
+		bottomPanel.add(unGroupButton);
 		bottomPanel.add(deleteButton);
 		bottomPanel.add(clearButton);
 		
@@ -70,30 +70,37 @@ public class Window extends JFrame {
 			addOval();
 			updateSize();
 		});
+		ovalButton.setToolTipText("Create new Oval at x, y with input size");
 		rectButton.addActionListener(e -> {
 			addRectangle();
 			updateSize();
 		});
+		rectButton.setToolTipText("Create new Rectangle at x, y with input size");
 		groupButton.addActionListener(e -> {
 			drawPanel.group();
 			updateSize();
 		});
+		groupButton.setToolTipText("group object that selected");
 		groupAllButton.addActionListener(e -> {
 			drawPanel.groupAll();
 			updateSize();
 		});
-		unGroupAllButton.addActionListener(e -> {
+		groupButton.setToolTipText("group all object in screen");
+		unGroupButton.addActionListener(e -> {
 			drawPanel.unGroup();
 			updateSize();
 		});
+		groupButton.setToolTipText("upgroup by grouping sequence");
 		deleteButton.addActionListener(e -> {
 			drawPanel.deleteSelected();
 			updateSize();
 		});
+		deleteButton.setToolTipText("delete selected object");
 		clearButton.addActionListener(e -> {
 			drawPanel.clear();
 			updateSize();
 		});
+		deleteButton.setToolTipText("delete all object in screen");
 	}
 	
 	private void addRectangle() {
