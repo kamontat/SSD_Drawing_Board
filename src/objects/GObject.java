@@ -26,6 +26,10 @@ public abstract class GObject {
 		return (x < pointerX && pointerX < x + width) && (y < pointerY && pointerY < y + height);
 	}
 	
+	public boolean isSelected() {
+		return selected;
+	}
+	
 	public void selected() {
 		selected = true;
 	}

@@ -1,12 +1,15 @@
 package main;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JPanel;
+import objects.CompositeGObject;
+import objects.GObject;
 
-import objects.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class DrawingBoard extends JPanel {
 	
@@ -30,20 +33,23 @@ public class DrawingBoard extends JPanel {
 	}
 	
 	public void groupAll() {
-		CompositeGObject b = new CompositeGObject();
-		gObjects.forEach(b::add);
-		gObjects.clear();
-		gObjects.add(b);
-		
-		repaint();
+		if (gObjects.size() != 0) {
+			CompositeGObject b = new CompositeGObject();
+			gObjects.forEach(b::add);
+			gObjects.clear();
+			gObjects.add(b);
+			repaint();
+		}
 	}
 	
 	public void deleteSelected() {
-		// TODO: Implement this method.
+		gObjects = gObjects.stream().filter(gObject -> !gObject.isSelected()).collect(Collectors.toList());
+		repaint();
 	}
 	
 	public void clear() {
-		// TODO: Implement this method.
+		gObjects.clear();
+		repaint();
 	}
 	
 	@Override
@@ -93,8 +99,8 @@ public class DrawingBoard extends JPanel {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			deselectAll();
-			x = e.getX() - x;
-			y = e.getY() - y;
+			x = e.getX();
+			y = e.getY();
 			gObjects.forEach(gObject -> {
 				if (gObject.pointerHit(x, y)) {
 					select = gObject;
@@ -106,10 +112,10 @@ public class DrawingBoard extends JPanel {
 		
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			x = e.getX() - x;
-			y = e.getY() - y;
 			if (select != null) {
-				select.move(x, y);
+				select.move(e.getX() - x, e.getY() - y);
+				x = e.getX();
+				y = e.getY();
 				repaint();
 			}
 		}
