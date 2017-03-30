@@ -5,6 +5,8 @@ import objects.Rect;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.*;
 
 public class Window extends JFrame {
@@ -25,6 +27,7 @@ public class Window extends JFrame {
 	private JButton clearButton = new JButton("Clear All");
 	
 	public Window() {
+		super("Draw Board (0)");
 		// setAlwaysOnTop(true);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setResizable(false);
@@ -59,11 +62,26 @@ public class Window extends JFrame {
 	}
 	
 	private void initButtons() {
-		ovalButton.addActionListener(e -> addOval());
-		rectButton.addActionListener(e -> addRectangle());
-		groupAllButton.addActionListener(e -> drawPanel.groupAll());
-		deleteButton.addActionListener(e -> drawPanel.deleteSelected());
-		clearButton.addActionListener(e -> drawPanel.clear());
+		ovalButton.addActionListener(e -> {
+			addOval();
+			updateSize();
+		});
+		rectButton.addActionListener(e -> {
+			addRectangle();
+			updateSize();
+		});
+		groupAllButton.addActionListener(e -> {
+			drawPanel.groupAll();
+			updateSize();
+		});
+		deleteButton.addActionListener(e -> {
+			drawPanel.deleteSelected();
+			updateSize();
+		});
+		clearButton.addActionListener(e -> {
+			drawPanel.clear();
+			updateSize();
+		});
 	}
 	
 	private void addRectangle() {
@@ -92,11 +110,47 @@ public class Window extends JFrame {
 		return new Color(r, g, b);
 	}
 	
+	private void updateSize() {
+		super.setTitle(String.format("Draw Board (%d)", drawPanel.objectNumber()));
+	}
+	
 	class InputField extends JTextField {
 		
 		public InputField(String text) {
 			super(text);
 			setPreferredSize(new Dimension(50, 20));
+			addKeyListener(listener());
+		}
+		
+		private KeyListener listener() {
+			JTextField self = this;
+			return new KeyListener() {
+				@Override
+				public void keyTyped(KeyEvent e) {
+					updated();
+				}
+				
+				@Override
+				public void keyPressed(KeyEvent e) {
+					updated();
+				}
+				
+				@Override
+				public void keyReleased(KeyEvent e) {
+					updated();
+				}
+				
+				private void updated() {
+					char[] chars = self.getText().toCharArray();
+					for (char c : chars) {
+						if (!Character.isDigit(c)) {
+							self.setBackground(Color.RED);
+						} else {
+							self.setBackground(Color.WHITE);
+						}
+					}
+				}
+			};
 		}
 		
 	}

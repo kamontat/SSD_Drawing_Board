@@ -52,6 +52,10 @@ public class DrawingBoard extends JPanel {
 		repaint();
 	}
 	
+	public int objectNumber() {
+		return gObjects.size();
+	}
+	
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
@@ -107,6 +111,10 @@ public class DrawingBoard extends JPanel {
 					gObject.selected();
 				}
 			});
+			
+			// deselect left
+			gObjects.stream().filter(gObject -> gObject.isSelected() && !gObject.equals(select)).forEach(GObject::deselected);
+			
 			repaint();
 		}
 		
