@@ -36,22 +36,24 @@ public class DrawingBoard extends JPanel {
 		repaint();
 	}
 	
+	// group by selected object
 	public void group() {
-		if (gObjects.size() != 0 && currentRect != null) {
-			CompositeGObject b = new CompositeGObject();
-			List<GObject> remove = gObjects.stream().filter(gObject -> gObject.isInside(currentRect)).collect(Collectors.toList());
-			// move from it to CompositeGObject
-			remove.forEach(b::add);
-			gObjects.removeAll(remove);
-			
-			gObjects.add(b);
-			currentRect = null;
-			repaint();
+		if (gObjects.size() > 0) {
+			List<GObject> select = getSelected(false);
+			if (select.size() > 1) {
+				CompositeGObject b = new CompositeGObject();
+				// move from it to CompositeGObject
+				select.forEach(b::add);
+				gObjects.removeAll(select);
+				// add CompositeGObject
+				gObjects.add(b);
+				repaint();
+			}
 		}
 	}
 	
 	public void groupAll() {
-		if (gObjects.size() != 0) {
+		if (gObjects.size() > 1) {
 			CompositeGObject b = new CompositeGObject();
 			gObjects.forEach(b::add);
 			gObjects.clear();
@@ -62,32 +64,29 @@ public class DrawingBoard extends JPanel {
 	
 	public void unGroup() {
 		List<GObject> newList = new ArrayList<>();
-		GObject removed = null;
+		List<GObject> removed = new ArrayList<>();
+		
 		for (GObject gObject : gObjects) {
 			if (gObject.getClass() == CompositeGObject.class) {
 				newList.addAll(CompositeGObject.class.cast(gObject).unGroup());
-				removed = gObject;
+				removed.add(gObject);
 			}
 		}
-		if (removed != null) {
+		if (removed.size() != 0) {
 			gObjects.addAll(newList);
-			gObjects.remove(removed);
+			gObjects.removeAll(removed);
 		}
 		repaint();
 	}
 	
 	public void deleteSelected() {
-		gObjects = gObjects.stream().filter(gObject -> !gObject.isSelected()).collect(Collectors.toList());
+		gObjects = getSelected(true);
 		repaint();
 	}
 	
 	public void clear() {
 		gObjects.clear();
 		repaint();
-	}
-	
-	public int objectNumber() {
-		return gObjects.size();
 	}
 	
 	@Override
@@ -144,7 +143,11 @@ public class DrawingBoard extends JPanel {
 		}
 		
 		public void mousePressed(MouseEvent e) {
-			deselectAll();
+			int ctrl = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+			int mask = e.getModifiers() & ctrl;
+			if (mask != ctrl) {
+				deselectAll();
+			}
 			end = new Point(e.getX(), e.getY());
 			start = end.getLocation();
 			// select obj
@@ -154,8 +157,11 @@ public class DrawingBoard extends JPanel {
 					gObject.selected();
 				}
 			});
+			
 			// deselect left
-			gObjects.stream().filter(gObject -> gObject.isSelected() && !gObject.equals(target)).forEach(GObject::deselected);
+			if (mask != ctrl)
+				gObjects.stream().filter(gObject -> gObject.isSelected() && !gObject.equals(target)).forEach(GObject::deselected);
+			
 			// rect drawer
 			if (target == null) {
 				currentRect = new Rectangle(end.x, end.y, 0, 0);
@@ -177,7 +183,11 @@ public class DrawingBoard extends JPanel {
 		public void mouseReleased(MouseEvent e) {
 			if (target == null) {
 				updateSize(e);
-				
+				List<GObject> inside = getInsideDrag(false);
+				inside.forEach(GObject::selected);
+				currentRect = null;
+				rectToDraw = null;
+				repaint();
 			}
 		}
 		
@@ -189,6 +199,10 @@ public class DrawingBoard extends JPanel {
 			Rectangle totalRepaint = rectToDraw.union(previousRectDrawn);
 			repaint(totalRepaint.x, totalRepaint.y, totalRepaint.width, totalRepaint.height);
 		}
+	}
+	
+	public int objectNumber() {
+		return gObjects.size();
 	}
 	
 	private void updateDrawableRect(int compWidth, int compHeight) {
@@ -232,5 +246,19 @@ public class DrawingBoard extends JPanel {
 			}
 		}
 		return new int[]{xy, wh};
+	}
+	
+	private List<GObject> getInsideDrag(boolean reverse) {
+		return gObjects.stream().filter(gObject -> {
+			if (reverse) return !gObject.isInside(rectToDraw);
+			else return gObject.isInside(rectToDraw);
+		}).collect(Collectors.toList());
+	}
+	
+	private List<GObject> getSelected(boolean reverse) {
+		return gObjects.stream().filter(gObject -> {
+			if (reverse) return !gObject.isSelected();
+			else return gObject.isSelected();
+		}).collect(Collectors.toList());
 	}
 }

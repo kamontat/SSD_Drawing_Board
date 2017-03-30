@@ -85,12 +85,12 @@ public class Window extends JFrame {
 			drawPanel.groupAll();
 			updateSize();
 		});
-		groupButton.setToolTipText("group all object in screen");
+		groupAllButton.setToolTipText("group all object in screen");
 		unGroupButton.addActionListener(e -> {
 			drawPanel.unGroup();
 			updateSize();
 		});
-		groupButton.setToolTipText("upgroup by grouping sequence");
+		unGroupButton.setToolTipText("ungroup by grouping sequence");
 		deleteButton.addActionListener(e -> {
 			drawPanel.deleteSelected();
 			updateSize();
@@ -100,7 +100,7 @@ public class Window extends JFrame {
 			drawPanel.clear();
 			updateSize();
 		});
-		deleteButton.setToolTipText("delete all object in screen");
+		clearButton.setToolTipText("delete all object in screen");
 	}
 	
 	private void addRectangle() {
