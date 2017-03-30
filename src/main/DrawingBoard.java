@@ -60,6 +60,22 @@ public class DrawingBoard extends JPanel {
 		}
 	}
 	
+	public void unGroup() {
+		List<GObject> newList = new ArrayList<>();
+		GObject removed = null;
+		for (GObject gObject : gObjects) {
+			if (gObject.getClass() == CompositeGObject.class) {
+				newList.addAll(CompositeGObject.class.cast(gObject).unGroup());
+				removed = gObject;
+			}
+		}
+		if (removed != null) {
+			gObjects.addAll(newList);
+			gObjects.remove(removed);
+		}
+		repaint();
+	}
+	
 	public void deleteSelected() {
 		gObjects = gObjects.stream().filter(gObject -> !gObject.isSelected()).collect(Collectors.toList());
 		repaint();
@@ -115,22 +131,6 @@ public class DrawingBoard extends JPanel {
 		}
 	}
 	
-	public void unGroup() {
-		List<GObject> newList = new ArrayList<>();
-		GObject removed = null;
-		for (GObject gObject : gObjects) {
-			if (gObject.getClass() == CompositeGObject.class) {
-				newList.addAll(CompositeGObject.class.cast(gObject).unGroup());
-				removed = gObject;
-			}
-		}
-		if (removed != null) {
-			gObjects.addAll(newList);
-			gObjects.remove(removed);
-		}
-		repaint();
-	}
-	
 	private class MAdapter extends MouseInputAdapter {
 		private Point start, end;
 		
@@ -177,7 +177,7 @@ public class DrawingBoard extends JPanel {
 		public void mouseReleased(MouseEvent e) {
 			if (target == null) {
 				updateSize(e);
-				// change to CompositeGObject
+				
 			}
 		}
 		
