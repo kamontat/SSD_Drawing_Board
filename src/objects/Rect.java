@@ -1,7 +1,6 @@
 package objects;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 
 public class Rect extends GObject {
 	
@@ -22,5 +21,4 @@ public class Rect extends GObject {
 	public void paintLabel(Graphics g) {
 		g.drawString("Rect", this.x, this.y + height + g.getFont().getSize());
 	}
-	
 }

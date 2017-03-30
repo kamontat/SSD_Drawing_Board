@@ -1,9 +1,6 @@
 package objects;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 
 public abstract class GObject {
 	
@@ -38,6 +35,7 @@ public abstract class GObject {
 		selected = false;
 	}
 	
+	
 	public void move(int dX, int dY) {
 		this.x += dX;
 		this.y += dY;
@@ -65,6 +63,10 @@ public abstract class GObject {
 	public abstract void paintObject(Graphics g);
 	
 	public abstract void paintLabel(Graphics g);
+	
+	public boolean isInside(Shape shape) {
+		return shape.getBounds().intersects(x, y, width, height);
+	}
 	
 	protected int getRightTop() {
 		return x + width;

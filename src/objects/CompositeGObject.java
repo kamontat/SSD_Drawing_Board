@@ -1,11 +1,10 @@
 package objects;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class CompositeGObject extends GObject {
-	
 	private List<GObject> gObjects;
 	
 	public CompositeGObject() {
@@ -17,6 +16,10 @@ public class CompositeGObject extends GObject {
 	public void add(GObject gObject) {
 		gObjects.add(gObject);
 		recalculateRegion();
+	}
+	
+	public List<GObject> unGroup() {
+		return gObjects.subList(0, gObjects.size());
 	}
 	
 	public void remove(GObject gObject) {

@@ -1,7 +1,6 @@
 package objects;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 
 public class Oval extends GObject {
 	
@@ -22,5 +21,4 @@ public class Oval extends GObject {
 	public void paintLabel(Graphics g) {
 		g.drawString("Oval", this.x, this.y + height + g.getFont().getSize());
 	}
-	
 }
